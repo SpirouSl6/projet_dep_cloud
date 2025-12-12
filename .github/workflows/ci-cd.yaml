@@ -76,10 +76,10 @@ jobs:
 
       - name: Deploy Backend
         run: |
-          kubectl apply -f backend-deployment.yaml
-          kubectl apply -f backend-service.yaml
+          kubectl apply -f deploy/backend-deployment.yaml
+          kubectl apply -f deploy/backend-service.yaml
 
       - name: Deploy Frontend
         run: |
-          kubectl apply -f frontend-deployment.yaml
-          kubectl apply -f frontend-service.yaml
+          kubectl apply -f deploy/frontend-deployment.yaml
+          kubectl apply -f deploy/frontend-service.yaml
