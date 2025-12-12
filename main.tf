@@ -11,7 +11,7 @@ provider "docker" {}
 
 # BACKEND IMAGE (build local)
 resource "docker_image" "backend" {
-  name = "backend-app:latest"
+  name = "spirousl6/backend-app:v1"
 
   build {
     context    = "${path.module}/backend"
@@ -24,7 +24,7 @@ resource "docker_image" "backend" {
 
 # FRONTEND IMAGE (build local)
 resource "docker_image" "frontend" {
-  name = "frontend-app:latest"
+  name = "spirousl6/frontend-app:v1"
 
   build {
     context    = "${path.module}/frontend"
