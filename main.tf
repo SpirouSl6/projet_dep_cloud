@@ -70,3 +70,23 @@ output "backend_url" {
 output "frontend_url" {
   value = "http://localhost:3000"
 }
+
+resource "docker_image" "mysql" {
+  name = "mysql:8"
+  keep_locally = true
+}
+
+resource "docker_container" "mysql" {
+  name  = "mysql-db"
+  image = docker_image.mysql.name
+
+  env = [
+    "MYSQL_ROOT_PASSWORD=rootpwd",
+    "MYSQL_DATABASE=mydb"
+  ]
+
+  ports {
+    internal = 3306
+    external = 3306
+  }
+}

@@ -1,14 +1,13 @@
-const express = require("express");
-const app = express();
-app.use(express.json());
+import mysql from "mysql2";
 
-app.get("/", (req, res) => {
-  res.json({ message: "API EduTech Fonctionnelle" });
+const db = mysql.createConnection({
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "rootpwd",
+  database: process.env.DB_NAME || "mydb",
 });
 
-app.post("/inscription", (req, res) => {
-  const { nom, email } = req.body;
-  res.json({ status: "Inscription enregistrée", nom, email });
+db.connect(err => {
+  if (err) throw err;
+  console.log("MySQL connected!");
 });
-
-app.listen(3000, () => console.log("Backend running on port 3000"));

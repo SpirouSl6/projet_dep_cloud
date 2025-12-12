@@ -83,3 +83,8 @@ jobs:
         run: |
           kubectl apply -f deploy/frontend-deployment.yaml
           kubectl apply -f deploy/frontend-service.yaml
+
+      - name: Deploy MySQL
+        run: |
+          kubectl apply -f deploy/mysql-deployment.yaml
+          kubectl apply -f deploy/mysql-service.yaml
