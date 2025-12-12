@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "5000:3000"
+    environment:
+      - PORT=3000
+    networks:
+      - edutech-net
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - edutech-net
+
+networks:
+  edutech-net:
+    driver: bridge
