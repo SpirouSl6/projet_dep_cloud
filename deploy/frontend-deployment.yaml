@@ -15,7 +15,7 @@ spec:
       containers:
         - name: frontend
           image: spirousl6/frontend-app:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           env:
