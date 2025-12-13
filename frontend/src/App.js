@@ -4,8 +4,7 @@ function App() {
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-
-  // IMPORTANT : URL backend adaptée pour Docker
+  
   const API_URL = "http://localhost:5000";
 
   const handleSubmit = async (e) => {
@@ -32,17 +31,29 @@ function App() {
   };
 
   return (
-    <div style={{ maxWidth: "450px", margin: "4rem auto", textAlign: "center" }}>
-      <h1>Inscription Étudiant</h1>
+    <div style={{ maxWidth: "600px", margin: "4rem auto", textAlign: "center" }}>
+      
+      {/* 🔹 TITRE PRINCIPAL */}
+      <h1>Plateforme EduTech - Inscription des étudiants</h1>
+      <p style={{ color: "#555", marginBottom: "3rem" }}>
+        Frontend React déployé sur Kubernetes
+      </p>
 
-      <form onSubmit={handleSubmit} style={{ marginTop: "2rem" }}>
+      {/* 🔹 FORMULAIRE */}
+      <h2>Inscription Étudiant</h2>
+
+      <form onSubmit={handleSubmit} style={{ marginTop: "1.5rem" }}>
         <input
           type="text"
           placeholder="Nom"
           value={nom}
           onChange={(e) => setNom(e.target.value)}
           required
-          style={{ padding: "10px", width: "100%", marginBottom: "1rem" }}
+          style={{
+            padding: "10px",
+            width: "100%",
+            marginBottom: "1rem",
+          }}
         />
 
         <input
@@ -51,7 +62,11 @@ function App() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          style={{ padding: "10px", width: "100%", marginBottom: "1rem" }}
+          style={{
+            padding: "10px",
+            width: "100%",
+            marginBottom: "1rem",
+          }}
         />
 
         <button
@@ -70,7 +85,11 @@ function App() {
         </button>
       </form>
 
-      {message && <p style={{ marginTop: "1rem" }}>{message}</p>}
+      {message && (
+        <p style={{ marginTop: "1rem", fontWeight: "bold" }}>
+          {message}
+        </p>
+      )}
     </div>
   );
 }
