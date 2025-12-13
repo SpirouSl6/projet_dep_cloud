@@ -9,6 +9,12 @@ terraform {
 
 provider "docker" {}
 
+
+# RÉSEAU DOCKER
+resource "docker_network" "edutech" {
+  name = "edutech-net"
+}
+
 # BACKEND IMAGE (build local)
 resource "docker_image" "backend" {
   name = "spirousl6/backend-app:v1"
@@ -17,8 +23,6 @@ resource "docker_image" "backend" {
     context    = "${path.module}/backend"
     dockerfile = "Dockerfile"
   }
-
-  keep_locally = true
 }
 
 
@@ -30,9 +34,40 @@ resource "docker_image" "frontend" {
     context    = "${path.module}/frontend"
     dockerfile = "Dockerfile"
   }
-
-  keep_locally = true
 }
+
+# MySQL IMAGE
+resource "docker_image" "mysql" {
+  name         = "mysql:8"
+}
+
+
+# MYSQL CONTAINER
+resource "docker_container" "mysql" {
+  name  = "mysql-db"
+  image = docker_image.mysql.name
+
+  env = [
+    "MYSQL_ROOT_PASSWORD=password",
+    "MYSQL_DATABASE=edutech"
+  ]
+
+  ports {
+    internal = 3306
+    external = 3306
+  }
+
+  networks_advanced {
+    name = docker_network.edutech.name
+  }
+
+  mounts {
+    target = "/docker-entrypoint-initdb.d"
+    source = abspath("${path.module}/init")
+    type   = "bind"
+  }
+}
+
 
 # BACKEND CONTAINER
 resource "docker_container" "backend" {
@@ -43,6 +78,21 @@ resource "docker_container" "backend" {
     internal = 3000
     external = 5000
   }
+
+  env = [
+    "MYSQL_HOST=mysql-db",
+    "MYSQL_USER=root",
+    "MYSQL_PASSWORD=password",
+    "MYSQL_DB=edutech"
+  ]
+
+  networks_advanced {
+    name = docker_network.edutech.name
+  }
+
+  depends_on = [
+    docker_container.mysql
+  ]
 }
 
 # FRONTEND CONTAINER
@@ -55,11 +105,13 @@ resource "docker_container" "frontend" {
     external = 3000
   }
 
-  env = [
-    "VITE_BACKEND_URL=http://localhost:5000"
-  ]
+  networks_advanced {
+    name = docker_network.edutech.name
+  }
 
-  depends_on = [docker_container.backend]
+  depends_on = [
+    docker_container.backend
+  ]
 }
 
 # OUTPUTS
@@ -71,22 +123,3 @@ output "frontend_url" {
   value = "http://localhost:3000"
 }
 
-resource "docker_image" "mysql" {
-  name = "mysql:8"
-  keep_locally = true
-}
-
-resource "docker_container" "mysql" {
-  name  = "mysql-db"
-  image = docker_image.mysql.name
-
-  env = [
-    "MYSQL_ROOT_PASSWORD=rootpwd",
-    "MYSQL_DATABASE=mydb"
-  ]
-
-  ports {
-    internal = 3306
-    external = 3306
-  }
-}

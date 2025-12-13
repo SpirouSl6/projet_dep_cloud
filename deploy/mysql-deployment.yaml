@@ -14,17 +14,24 @@ spec:
     spec:
       containers:
         - name: mysql
-          image: mysql:8
+          image: mysql:8.0
+          args:
+            - "--default-authentication-plugin=mysql_native_password"
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: rootpwd
-            - name: MYSQL_DATABASE
-              value: mydb
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: root-password
           ports:
             - containerPort: 3306
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: mysql-data
-          emptyDir: {}   
+        - name: initdb
+          configMap:
+            name: mysql-init-config

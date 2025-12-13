@@ -19,12 +19,15 @@ spec:
           ports:
             - containerPort: 3000
           env:
-            - name: DB_HOST
-              value: "mysql"
-            - name: DB_USER
+            - name: MYSQL_HOST
+              value: "mysql-service"
+            - name: MYSQL_USER
               value: "root"
-            - name: DB_PASSWORD
-              value: "rootpwd"
-            - name: DB_NAME
-              value: "mydb"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: root-password
+            - name: MYSQL_DB
+              value: "edutech"
 
