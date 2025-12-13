@@ -6,7 +6,7 @@ function App() {
   const [message, setMessage] = useState("");
   const [inscriptions, setInscriptions] = useState([]);
 
-  const API_URL = "http://localhost:5000";
+  const API_URL = process.env.REACT_APP_BACKEND_URL;
 
   // 🔹 Charger les inscriptions
   const loadInscriptions = async () => {

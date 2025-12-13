@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+ENV REACT_APP_BACKEND_URL=http://backend-service:3000
 RUN npm run build
 
 FROM nginx:alpine
