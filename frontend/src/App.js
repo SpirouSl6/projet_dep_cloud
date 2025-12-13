@@ -1,12 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  
+  const [inscriptions, setInscriptions] = useState([]);
+
   const API_URL = "http://localhost:5000";
 
+  // 🔹 Charger les inscriptions
+  const loadInscriptions = async () => {
+    const res = await fetch(`${API_URL}/inscription`);
+    const data = await res.json();
+    setInscriptions(data);
+  };
+
+  useEffect(() => {
+    loadInscriptions();
+  }, []);
+
+  // 🔹 Soumission formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("Envoi en cours...");
@@ -14,46 +27,39 @@ function App() {
     try {
       const res = await fetch(`${API_URL}/inscription`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nom, email }),
       });
 
-      const data = await res.json();
-      setMessage(`✔ Inscription réussie (ID = ${data.id})`);
+      await res.json();
+      setMessage("✔ Inscription réussie");
 
       setNom("");
       setEmail("");
-    } catch (error) {
-      setMessage("❌ Erreur lors de l'inscription.");
+      loadInscriptions(); // 🔥 refresh liste
+    } catch {
+      setMessage("❌ Erreur lors de l'inscription");
     }
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "4rem auto", textAlign: "center" }}>
+    <div style={{ maxWidth: "650px", margin: "4rem auto", textAlign: "center" }}>
       
-      {/* 🔹 TITRE PRINCIPAL */}
       <h1>Plateforme EduTech - Inscription des étudiants</h1>
-      <p style={{ color: "#555", marginBottom: "3rem" }}>
+      <p style={{ color: "#555", marginBottom: "2rem" }}>
         Frontend React déployé sur Kubernetes
       </p>
 
-      {/* 🔹 FORMULAIRE */}
-      <h2>Inscription Étudiant</h2>
+      {/* FORMULAIRE */}
+      <h2>Nouvelle inscription</h2>
 
-      <form onSubmit={handleSubmit} style={{ marginTop: "1.5rem" }}>
+      <form onSubmit={handleSubmit}>
         <input
-          type="text"
           placeholder="Nom"
           value={nom}
           onChange={(e) => setNom(e.target.value)}
           required
-          style={{
-            padding: "10px",
-            width: "100%",
-            marginBottom: "1rem",
-          }}
+          style={{ width: "100%", padding: "10px", marginBottom: "1rem" }}
         />
 
         <input
@@ -62,34 +68,26 @@ function App() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          style={{
-            padding: "10px",
-            width: "100%",
-            marginBottom: "1rem",
-          }}
+          style={{ width: "100%", padding: "10px", marginBottom: "1rem" }}
         />
 
-        <button
-          type="submit"
-          style={{
-            padding: "10px",
-            width: "100%",
-            cursor: "pointer",
-            backgroundColor: "#3b82f6",
-            color: "white",
-            border: "none",
-            fontSize: "1rem",
-          }}
-        >
+        <button style={{ width: "100%", padding: "10px" }}>
           S'inscrire
         </button>
       </form>
 
-      {message && (
-        <p style={{ marginTop: "1rem", fontWeight: "bold" }}>
-          {message}
-        </p>
-      )}
+      {message && <p>{message}</p>}
+
+      {/* LISTE DES INSCRIPTIONS */}
+      <h2 style={{ marginTop: "3rem" }}>Inscriptions</h2>
+
+      <ul style={{ textAlign: "left" }}>
+        {inscriptions.map((i) => (
+          <li key={i.id}>
+            <strong>{i.nom}</strong> – {i.email}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

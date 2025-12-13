@@ -4,9 +4,7 @@ const cors = require("cors");
 
 const app = express();
 
-// Autoriser toutes les origines (en dev)
 app.use(cors());
-
 app.use(express.json());
 
 // Connexion MySQL
@@ -17,23 +15,22 @@ const pool = mysql.createPool({
   database: process.env.MYSQL_DB || "edutech",
 });
 
-// Route de test API
+// 🔹 API OK
 app.get("/", (req, res) => {
   res.json({ message: "API EduTech Fonctionnelle" });
 });
 
-// Route de test BDD
+// 🔹 TEST BDD
 app.get("/db-test", async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT 1 + 1 AS result");
     res.json({ db: "OK", result: rows[0].result });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ db: "ERROR", message: err.message });
+    res.status(500).json({ db: "ERROR", error: err.message });
   }
 });
 
-// Route inscription
+// 🔹 POST inscription (création)
 app.post("/inscription", async (req, res) => {
   const { nom, email } = req.body;
 
@@ -44,15 +41,27 @@ app.post("/inscription", async (req, res) => {
     );
 
     res.json({
-      status: "Inscription enregistrée",
       id: result.insertId,
       nom,
       email,
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Erreur BDD", error: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
-app.listen(3000, () => console.log("Backend running on port 3000"));
+// ✅ NOUVELLE ROUTE : GET inscription (lecture)
+app.get("/inscription", async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT id, nom, email FROM inscriptions ORDER BY id DESC"
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.listen(3000, () =>
+  console.log("Backend running on port 3000")
+);
