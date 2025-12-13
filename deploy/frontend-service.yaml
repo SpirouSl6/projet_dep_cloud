@@ -3,9 +3,10 @@ kind: Service
 metadata:
   name: frontend-service
 spec:
+  type: LoadBalancer
+  loadBalancerIP: 4.211.155.252
   selector:
     app: frontend-app
   ports:
     - port: 80
       targetPort: 80
-  type: NodePort
