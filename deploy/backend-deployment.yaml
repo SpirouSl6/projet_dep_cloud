@@ -21,13 +21,22 @@ spec:
           env:
             - name: MYSQL_HOST
               value: "mysql-service"
+
             - name: MYSQL_USER
-              value: "root"
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_USER
+
             - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: root-password
+                  key: MYSQL_PASSWORD
+
             - name: MYSQL_DB
-              value: "edutech"
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_DATABASE
 
