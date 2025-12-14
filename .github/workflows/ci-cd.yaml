@@ -90,3 +90,15 @@ jobs:
           kubectl apply -f deploy/mysql-configmap.yaml
           kubectl apply -f deploy/mysql-deployment.yaml
           kubectl apply -f deploy/mysql-service.yaml
+
+      - name: Deploy RBAC
+        run: |
+          kubectl apply -f deploy/backend-serviceaccount.yaml
+          kubectl apply -f deploy/backend-role.yaml
+          kubectl apply -f deploy/backend-rolebinding.yaml
+
+
+
+
+
+          
